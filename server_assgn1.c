@@ -36,14 +36,14 @@ int main() {
 	printf("Listening ......\n");
 	if((status = listen(sockfd, 10)) == -1) {
 		fprintf(stderr, "errno:%d\n", errno);
-		return 3;
+		return 4;
 	}
 	
 	addr_size = sizeof(their_addr);
 	
 	if((newfd = accept(sockfd, (struct sockaddr*)&their_addr, &addr_size)) == -1) {
 		fprintf(stderr, "errno:%d\n", errno);
-		return 4;
+		return 5;
 	}	
 	
 	char *msg = "Enter filename:";
@@ -51,14 +51,18 @@ int main() {
 	
 	len = strlen(msg);
 	if((bytes_sent = send(newfd, msg, len, 0)) != len) {
-		fprintf(stderr, "Packet lost\n");
-		return 5;
+		fprintf(stderr, "Sending failed\n");
+		return 6;
 	}
 	else
 		printf("Message sent\n");
 		
 	FILE *fp;
 	fp = fopen("new.txt", "w");
+	if(fp == NULL) {
+		printf("Unable to open file\n");
+		return 7;
+	}
 		
 	char buff='a';
 	while(buff!='\0') {
@@ -78,13 +82,17 @@ int main() {
 	printf("Sending reversed file\n");
 		
 	fp = fopen("new.txt", "r");
+	if(fp == NULL) {
+		printf("Unable to open file\n");
+		return 7;
+	}
 	fseek(fp,0,SEEK_END);
 	fseek(fp,-1, SEEK_CUR);
 	while(ftell(fp)>=0) {
 		buff = fgetc((FILE *)fp);
 		if((bytes_sent = send(newfd, &buff, 1, 0)) != 1) {
-			fprintf(stderr, "Packet lost\n");
-			return 7;
+			fprintf(stderr, "Sending failed\n");
+			return 8;
 		}
 //		printf("%c", buff);
 		if(ftell(fp)==1) 
@@ -93,8 +101,8 @@ int main() {
 	}
 	buff='\0';
 	if((bytes_sent = send(newfd, &buff, 1, 0)) != 1) {
-		fprintf(stderr, "Packet lost\n");
-		return 7;
+		fprintf(stderr, "Sending failed\n");
+		return 8;
 	}
 	fclose(fp);	
 	

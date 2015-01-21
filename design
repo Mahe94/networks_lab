@@ -1,0 +1,1 @@
+After the connection between the server and the client has been established successfully, the client sends each character to the server. The server saves each character in a file and the creates another file which is the reversal of the first file. Now the server begins to send each character of the reversed file to the client, and the client save it into a new file.
