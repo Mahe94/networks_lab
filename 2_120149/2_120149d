@@ -1,0 +1,1 @@
+When the client sends the msg "nslookup XXXXXXXXX" to the DNS server, the server checks the received url with a list of urls stored in the file named ip.txt. When a match is found, the server sends back the ip address of the matched url and this is displayed in the client side.

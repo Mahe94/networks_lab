@@ -1,0 +1,4 @@
+www.google.com 192.0.0.1
+www.yahoo.com 192.0.163.2
+www.hotmail.com 192.3.44.2
+www.facebook.com 192.23.4.22

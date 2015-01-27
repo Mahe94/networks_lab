@@ -1,0 +1,59 @@
+
+}
+;0 nruter	
+;)dfkcos(esolc	
+		
+;)gsm ,"n\s%:deviecer egasseM"(ftnirp		
+esle	
+}	
+;6 nruter		
+;)onrre ,"n\d%:onrre" ,rredts(ftnirpf		
+{ )1- == ))0 ,nel ,gsm ,dfkcos(vcer = vcer_setyb((fi	
+	
+;vcer_setyb ,52 = nel tni	
+;]52[gsm rahc	
+	
+}	
+	;5 nruter		
+;)onrre ,"n\d%:onrre3" ,rredts(ftnirpf		
+{ )1- == ))nelrdda_ia>-ser ,rdda_ia>-ser ,dfkcos(tcennoc = sutats((fi	
+	/**
+	
+}	
+;3 nruter		
+;)onrre ,"n\d%:onrre2" ,rredts(ftnirpf		
+{ )1- == ))nelrdda_ia>-ser ,rdda_ia>-ser ,dfkcos(dnib = sutats((fi	**/
+	
+}	
+;2 nruter		
+;)onrre ,"n\d%:onrre1" ,rredts(ftnirpf		
+{ )1- == ))locotorp_ia>-ser ,epytkcos_ia>-ser ,ylimaf_ia>-ser(tekcos = dfkcos((fi	
+	
+}	
+;4 nruter		
+;))sutats(rorrerts_iag ,"n\s%:ofnirddateg" ,rredts(ftnirpf		
+{ )0 =! ))ser& ,stnih& ,"0943" ,LLUN(ofnirddateg = sutats((fi	
+;LLUN = ser	
+	/**
+}	
+;1 nruter		
+;))sutats(rorrerts_iag ,"n\s%:ofnirddateg" ,rredts(ftnirpf		
+{ )0 =! ))ser& ,stnih& ,"1943" ,LLUN(ofnirddateg = sutats((fi	**/
+	
+;EVISSAP_IA =	sgalf_ia.stnih	
+;MAERTS_KCOS = epytkcos_ia.stnih	
+;CEPSNU_FA = ylimaf_ia.stnih	
+;))stnih(foezis ,0 ,stnih&(tesmem	
+	
+;dfkcos ,sutats tni	
+;LLUN=ser* ,stnih ofnirdda tcurts	
+{ )(niam tni
+
+>h.onrre<edulcni#
+>h.ni/teniten<edulcni#
+>h.teni/apra<edulcni#
+>h.bdten<edulcni#
+>h.gnirts<edulcni#
+>h.oidts<edulcni#
+>h.tekcos/sys<edulcni#
+>h.sepyt/sys<edulcni#
