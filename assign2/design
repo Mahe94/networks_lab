@@ -1,0 +1,8 @@
+First the connection between the client and the proxy server is established.
+The proxy server receives the http request into buffer.
+Then it splits the buffer into three strings. The first string will have "GET", second the url and the third will have the http version "HTTP/1.0".
+The proxy server then searches whether the url contain the port number of the host. If it is present, flag is initialised to 1 and the port number is stored in variable 'port'. Else the variable port will contain 80 (default http port number).
+The host is stored in 'host' and the function gethostbyname is used to get the host address.
+If there is a path in the url, it is searched and stored in 'path' variable.
+Then the proxy server make the http request using the above values.
+Now the proxy server tries to connect to the host and sends the http request. It then receives the response message and sends this to the client.
