@@ -36,7 +36,7 @@ int main() {
 	struct sockaddr_in their_addr;
 	their_addr.sin_family = AF_INET;
 	their_addr.sin_port = htons(3920);
-	their_addr.sin_addr.s_addr = INADDR_ANY;
+	inet_aton("192.168.0.114",&their_addr.sin_addr);
 	memset(&(their_addr.sin_zero), '\0', 8);
 
 	char msg[100];
