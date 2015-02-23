@@ -39,7 +39,7 @@ int main() {
 	inet_aton("192.168.0.114",&their_addr.sin_addr);
 	memset(&(their_addr.sin_zero), '\0', 8);
 
-	char msg[100];
+	char *msg;
 	int len, bytes_sent, bytes_recv;
 	int addr_size = sizeof(their_addr);
 	
