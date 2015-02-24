@@ -1,3 +1,8 @@
+/*
+	Assign 4
+	using broadcast and sigalarm
+*/
+
 #include<sys/types.h>
 #include<sys/socket.h>
 #include<sys/time.h>
@@ -13,30 +18,38 @@
 #include<time.h>
 #include<signal.h>
 
-struct sockaddr_in their_addr;
-char msg1[110], name[110], recv_msg[110], send_msg[110];
-int len, bytes_sent, bytes_recv, sockfd;
+struct sockaddr_in main_addr, their_addr, *my_addr;
+char msg1[110], msg2[110], msg3[110], msg4[110], msg5[110], msg6[110], name[110], recv_msg[110], send_msg[110];
+int len1, len2, len3, len4, len5, len6, bytes_sent, bytes_recv, sockfd, getmyip = 0;
 int addr_size = sizeof(their_addr);
 fd_set master, read_fds;
 int fdmax;
 struct timeval tv;
+char ip[INET_ADDRSTRLEN], my_ip[INET_ADDRSTRLEN];
 
 void execute(char *recv_msg, struct sockaddr_in their_addr) {
-	char ip[INET_ADDRSTRLEN];
 	inet_ntop(their_addr.sin_family, &their_addr.sin_addr, ip, INET_ADDRSTRLEN);
-	char size[3];
-	int len;
-	switch(recv_msg[0]) {
-		case '1':			
-		case '2':
-		case '3':
-			printf("%s %s\n", recv_msg, ip);
+	if(strcmp(ip, my_ip)) {
+		char size[3];
+		int len;
+		switch(recv_msg[0]) {
+			case '1':
+				if((bytes_sent = sendto(sockfd, msg2, len2, 0, (struct sockaddr*)&main_addr, addr_size)) != len2) {
+					perror("Error");
+					return ;
+				}
+				else
+					printf("Sending packet 2 to %s\n", ip);
+				break;			
+			case '3':
+			case '5':
+				printf("%s %s\n", recv_msg, ip);
+		}
 	}
 }
 
 void check_users() {
-	len = strlen(msg1);
-	if((bytes_sent = sendto(sockfd, msg1, len, 0, (struct sockaddr*)&their_addr, addr_size)) != len) {
+	if((bytes_sent = sendto(sockfd, msg1, len1, 0, (struct sockaddr*)&main_addr, addr_size)) != len1) {
 		perror("Error");
 		return ;
 	}
@@ -48,13 +61,23 @@ void check_users() {
 				perror("Packet 1 Error:");
 			}	
 			else {
-				if(recv_msg[0] == 2) {
-					char ip[INET_ADDRSTRLEN];
-					recv_msg[bytes_recv] = '\0';
-					printf("%s from %s\n", recv_msg, inet_ntop(their_addr.sin_family, &their_addr.sin_addr, ip, INET_ADDRSTRLEN));
+				inet_ntop(their_addr.sin_family, &their_addr.sin_addr, ip, INET_ADDRSTRLEN);
+				if(getmyip == 0) {				
+					if(recv_msg[0] == '1' || strcmp(recv_msg+2, name)==0) {
+						strcpy(my_ip , ip);
+						printf("My ip is %s\n", my_ip);					
+						getmyip = 1;
+					}				
 				}
-				else
-					execute(recv_msg, their_addr);	
+				else if(strcmp(ip, my_ip)){
+					if(recv_msg[0] == 2) {
+						char ip[INET_ADDRSTRLEN];
+						recv_msg[bytes_recv] = '\0';
+						printf("%s from %s\n", recv_msg, inet_ntop(their_addr.sin_family, &their_addr.sin_addr, ip, INET_ADDRSTRLEN));
+					}
+					else
+						execute(recv_msg, their_addr);	
+				}
 			}
 		}
 		else
@@ -83,6 +106,7 @@ int main() {
 		return 1;
 	}
 	
+	
 	if((sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) {
 		fprintf(stderr, "errno:%d\n", errno);
 		return 2;
@@ -108,10 +132,10 @@ int main() {
 	tv.tv_sec = 2;
 	tv.tv_usec = 500000;
 	
-	their_addr.sin_family = AF_INET;
-	their_addr.sin_port = htons(3300);
-	inet_aton("255.255.255.255",&their_addr.sin_addr);
-	memset(&(their_addr.sin_zero), '\0', 8);
+	main_addr.sin_family = AF_INET;
+	main_addr.sin_port = htons(3300);
+	inet_aton("255.255.255.255",&main_addr.sin_addr);
+	memset(&(main_addr.sin_zero), '\0', 8);
 
 	printf("Enter username:");
 	gets(name);
@@ -119,6 +143,11 @@ int main() {
 		sprintf(msg1, "1%d%s", (int)strlen(name), name);
 	else
 		sprintf(msg1, "10%d%s", (int)strlen(name), name);
+	len1 = strlen(msg1);
+		
+	strcpy(msg2, msg1);
+	msg2[0] = '2';
+	len2 = strlen(msg2);
 	
 	check_users();
 	
