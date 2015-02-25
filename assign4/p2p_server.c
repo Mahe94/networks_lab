@@ -10,21 +10,12 @@
 
 #define PORT "3300"
 
-int user_fd[100];
-
-int find(int fd) {
-	int i;
-	for(i=0; i<100; ++i)
-		if(user_fd[i] == fd)
-			return i;
-	return -1;
-}
-
 int main() {
 	struct sockaddr_storage their_addr;
 	socklen_t addr_size;
 	struct addrinfo hints, *res;
 	int status, sockfd, newfd;
+	int i, j, k, bytes_recv, bytes_sent, len;
 	
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
@@ -56,19 +47,20 @@ int main() {
 	
 	//--------------server initialization-------------------//
 	
+	system("rm client_list");
+	
+	FILE *fw;
+	FILE *fr;
+	
 	fd_set master, read_fds;
 	int fdmax = sockfd;
 	
-	char username[100][100];
-	memset(user_fd, 0, sizeof(user_fd));
-	memset(username, 0 , sizeof(username));
-	int bytes_recv, bytes_sent, i, len;
-	char msg[120];
+	char msg[1024], msg3[1024], name[100], line[1024], *filename;
 	
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);
 	FD_SET(sockfd, &master);
-	printf("%d - SOCKFD\n", sockfd);
+//	printf("%d - SOCKFD\n", sockfd);
 	
 	while(1) {
 		read_fds = master;
@@ -85,52 +77,60 @@ int main() {
 						FD_SET(newfd, &master);
 						if(newfd > fdmax)
 							fdmax = newfd;
-						printf("Newfd added:%d\n", newfd);
+						printf("New client accepted ....\n");
 					}
 						
 				}
 				else {
-					if((bytes_recv = recv(i, msg, 105, 0)) <=0) {
+					if((bytes_recv = recv(i, msg, 1024, 0)) <=0) {
 						if(bytes_recv <0) {
 							fprintf(stderr, "errno:%d\n", errno);
 							return 4;
 						}
 						close(i);
 						FD_CLR(i, &master);
-						
-						int fd = find(i);
-						user_fd[fd] = 0;
-						memset(username[fd], 0, sizeof(username[fd]));
 					}	
 					else {
-						len = strlen(msg);
-						int u;
+						msg[bytes_recv] = '\0';
 						switch(msg[0]) {
+							case '1':
+								fw = fopen("client_list", "a");
+								
+								printf("PORT added .....\n");	
+								fputs(msg, (FILE *)fw);
+								fputc('\n', (FILE *)fw);
+								
+								fclose(fw);
+								
+								break;
+								
 							case '2':
-								u = 0;
-								while(user_fd[u] != 0) 
-									++u;
+								filename = msg + 1;
+								msg3[0] = '3';
+								j=1;
 								
-								user_fd[u] = i;
-								msg[bytes_recv]='\0';
-								strcpy(username[u], msg+3);
-							
-								printf("%s has joined at fd:%d\n", username[u], user_fd[u]);
-								break;
-								
-							case '3':
-								if(fork())
-									continue;
-								for(u = 0; u<100; ++u) {
-									if(user_fd[u] != 0 && user_fd[u] != i) {
-										if((bytes_sent = send(user_fd[u], msg, len, 0)) != len) {
-											perror("Send:");
-											return 6;
-										}	
-									}	
+								fr = fopen("client_list", "r");
+								while(fgets(line, sizeof(line), fr) != NULL) {
+									if(strstr(line, filename) != NULL) {
+										k = 1;
+										while(line[k] != ' ') {
+											msg3[j]=line[k];
+											++j;
+											++k;
+										}
+										msg3[j] = '\n';
+										++j;
+									}
 								}
-								exit(0);
-								break;
+								fclose(fr);
+								
+								len = strlen(msg3);
+								if((bytes_sent = send(i, msg3, len, 0)) != len) {
+									fprintf(stderr, "Sending failed\n");
+									return 6;
+								}
+								else
+									printf("Packet3 send\n");
 						}
 					}			
 				}
