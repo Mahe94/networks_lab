@@ -172,7 +172,7 @@ int main(int argc, char* argv[] ) {
 	
 			buff='a';
 			while(buff!='\0') {
-				if((bytes_recv = recv(sockfd, &buff, 1, 0)) == -1) {
+				if((bytes_recv = recv(newfd, &buff, 1, 0)) == -1) {
 					fprintf(stderr, "errno:%d\n", errno);
 					return 7;
 				}
@@ -184,7 +184,7 @@ int main(int argc, char* argv[] ) {
 				}
 			}
 			fclose(fp);		
-			
+			close(newfd);
 			
 		}
 	}
@@ -234,7 +234,7 @@ int main(int argc, char* argv[] ) {
 						}
 						else {
 							msg[bytes_recv] = '\0';
-							printf("Packet2:%s\n", msg);
+							printf("Packet2 recieved\n");
 							
 							char *filename;
 							filename = msg + 1;
@@ -248,14 +248,23 @@ int main(int argc, char* argv[] ) {
 							
 							while((buff = fgetc((FILE *)fp))!=EOF) {
 						//		printf("%c", buff);
-								if((bytes_sent = send(sockfd, &buff, 1, 0)) != 1) {
+								if((bytes_sent = send(newfd, &buff, 1, 0)) != 1) {
 									fprintf(stderr, "Sending failed\n");
 									return 6;
 								}
 							}
+							buff = '\0';
+							if((bytes_sent = send(newfd, &buff, 1, 0)) != 1) {
+								fprintf(stderr, "Sending failed\n");
+								return 6;
+							}
+							
 							fclose(fp);
+							printf("Finished Sending\n");
+//							scanf("%c", &buff);
 						}	
-						close(newfd);		
+						close(newfd);	
+						exit(0);	
 					}
 				}
 			}
