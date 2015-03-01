@@ -88,6 +88,7 @@ int main(int argc, char* argv[] ) {
 			strcat(msg, line);
 		}
 	}
+	strcat(msg, " ");
 	system("rm files");
 	
 //	printf("%s\n", msg);
@@ -101,6 +102,7 @@ int main(int argc, char* argv[] ) {
 	
 	if(fork()) {
 		while(1) {
+			memset(name, 0, sizeof(name));
 			printf("Enter filename to be searched:");
 			gets(name);
 			
@@ -129,6 +131,8 @@ int main(int argc, char* argv[] ) {
 						return 4;
 					}
 					else {
+						if(bytes_recv == 1) 
+							printf("No results found\n");
 						msg3[bytes_recv] = '\0';
 						char *result = msg3 + 1;
 						printf("%s\n---------------End Result---------------\n", result);
@@ -139,8 +143,15 @@ int main(int argc, char* argv[] ) {
 					break;
 			}
 			
+			if(bytes_recv == 1) 
+				continue;
 			printf("Select the port:");
 			gets(port);
+			
+			if(strstr(msg3, port) == NULL) {
+				printf("Invalid Port\n");
+				continue;	
+			}
 			
 			if((status = getaddrinfo(NULL, port, &hints, &res)) != 0) {
 				fprintf(stderr, "getaddrinfo:%s\n", gai_strerror(status));
@@ -234,7 +245,7 @@ int main(int argc, char* argv[] ) {
 						}
 						else {
 							msg[bytes_recv] = '\0';
-							printf("Packet2 recieved\n");
+//							printf("Packet2 recieved\n");
 							
 							char *filename;
 							filename = msg + 1;
@@ -260,7 +271,7 @@ int main(int argc, char* argv[] ) {
 							}
 							
 							fclose(fp);
-							printf("Finished Sending\n");
+//							printf("Finished Sending\n");
 //							scanf("%c", &buff);
 						}	
 						close(newfd);	

@@ -55,7 +55,7 @@ int main() {
 	fd_set master, read_fds;
 	int fdmax = sockfd;
 	
-	char msg[1024], msg3[1024], name[100], line[1024], *filename;
+	char msg[1024], msg3[1024], name[100], line[1024], filename[1024];
 	
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);
@@ -82,6 +82,7 @@ int main() {
 						
 				}
 				else {
+					memset(msg, 0, sizeof(msg));
 					if((bytes_recv = recv(i, msg, 1024, 0)) <=0) {
 						if(bytes_recv <0) {
 							fprintf(stderr, "errno:%d\n", errno);
@@ -105,7 +106,11 @@ int main() {
 								break;
 								
 							case '2':
-								filename = msg + 1;
+								filename[0]=' ';
+								filename[1]='\0';
+								strcat(filename, msg + 1);
+								strcat(filename, " ");
+								//filename = msg + 1;
 								msg3[0] = '3';
 								j=1;
 								
