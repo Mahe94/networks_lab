@@ -1,0 +1,23 @@
+						--------Server--------
+1)The server binds its socket to port 3300 and start accepting. The server uses select to check if someone is trying to connect or communicate.
+2)When a client connects with the server, the server adds the new socket to the fd set so that it can check whether the client is trying to communicate with it in the future.
+3)Everytime a client connects to the server, the server expects a packet 1 from that server. 
+4)Packet 1 contains port number of the client and the files it has. The server saves this data in a file named client_list.
+5)When the client sends a packet 2 to server, the server checks for the client having this file using the data in client_list. It this sends the port number of all those client who has the file.
+
+						--------Client--------
+1)When the client start, it uses the port number entered by the user through the terminal. This port will be used by other client to connect for downloading files.
+2)The client first connects with the server and sends Packet 1 which contains its port number and the files.
+3)The program then forks itself where the parent process is handling the GUI part and child process listens to the port assigned to it.
+4)Parent Process:-
+	a)This process accepts a filename from the user and send Packet 2 to server. Packet 2 contains the filename requested by the user.
+	b)The server respond back with Packet 3 which contains all the ports of clients having the file.
+	c)These port numbers are displayed to the user and the user have to choose one.
+	d)It checks whether the entered port is valid, if not the session is stop and the process starts from the beginning asking the user to enter a filename.
+	e)If it is a valid port, a TCP connect is established to the client having the file.
+	f)The client having the file start sending the file.
+	g)When the download is done, the connect is closed and the GUI again ask the user to enter a filename.
+5)Child Process:-
+	a)This process listens to the port and checks if any client is trying to connect with it.
+	b)When a new connection is established, the Packet 2 is received which contains the filename to be sent.
+	c)This process then sends the required file to the client and then closes the connect.	
